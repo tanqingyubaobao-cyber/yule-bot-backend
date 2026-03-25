@@ -1,0 +1,13 @@
+{
+  "name": "telegram-bot-backend",
+  "version": "1.0.0",
+  "description": "Simple Telegram bot with inline keyboard",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "telegraf": "^4.15.3"
+  }
+}
