@@ -63,13 +63,26 @@ app.get('/', (req, res) => res.send('Bot is running'));
 
 // 启动服务器，并设置 Webhook
 app.listen(PORT, async () => {
-  console.log(`Server running on port ${PORT}`);
-  // 设置 Webhook 到 Render 提供的域名（部署时会自动生成）
-  const webhookUrl = `${process.env.RENDER_EXTERNAL_URL}/webhook/${BOT_TOKEN}`;
+  console.log(`服务器运行在端口 ${PORT}`);
+
+  // 获取 Render 提供的公网 URL
+  let externalUrl = process.env.RENDER_EXTERNAL_URL;
+  if (!externalUrl && process.env.RENDER_EXTERNAL_HOSTNAME) {
+    externalUrl = `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`;
+  }
+  if (!externalUrl) {
+    console.error('无法获取 Render 公网 URL，Webhook 设置失败。请确保在 Render 环境中运行。');
+    return;
+  }
+
+  const webhookUrl = `${externalUrl}/webhook/${BOT_TOKEN}`;
+  console.log(`尝试设置 Webhook 为: ${webhookUrl}`);
+
   try {
     await bot.telegram.setWebhook(webhookUrl);
-    console.log(`Webhook set to ${webhookUrl}`);
+    console.log('Webhook 设置成功');
   } catch (err) {
     console.error('设置 Webhook 失败:', err);
+    // 不退出进程，让服务器继续运行
   }
 });
